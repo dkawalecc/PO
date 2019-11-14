@@ -30,10 +30,10 @@ public class GrassField extends AbstractWorldMap implements IWorldMap {
     public boolean canMoveTo(Vector2d position) {
         Object that = objectAt(position);
         //prio for animal so we can place it on the grass field
-        return ( that == null|| that instanceof Grass);
+        return ( !isOccupied(position)|| that instanceof Grass);
         //we already check if the move is inside the border of our map (ReactangularMap)
     }
-//!isOccupied(position)
+
     public Object objectAt(Vector2d position) {
         //it is necessary
         for (Animal animal : animals) {
