@@ -29,7 +29,7 @@ public class GrassFieldTest {
         //map.grassMap.remove(Grass..
 
         //possible since it is blank space
-        assertFalse(map.canMoveTo(new Vector2d(2,2)));
+        assertTrue(map.canMoveTo(new Vector2d(2,2)));
         map.grassMap.add(new Grass(new Vector2d(2,2)));
 
         assertTrue(map.canMoveTo(new Vector2d(2,2)));

@@ -31,12 +31,12 @@ public class Animal implements IMapElement{
                 break;
             case FORWARD:
                 Vector2d v1 = this.position.add(this.orientation.toUnitVector());
-                if (this.map.canMoveTo(v1))
+                if (map.canMoveTo(v1))
                     this.position = v1;
                 break;
             case BACKWARD:
                 Vector2d v2 = this.position.subtract(this.orientation.toUnitVector());
-                if (this.map.canMoveTo(v2))
+                if (map.canMoveTo(v2))
                     this.position = v2;
                 break;
         }
