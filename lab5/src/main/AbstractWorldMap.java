@@ -1,29 +1,48 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-abstract class AbstractWorldMap implements IWorldMap{
+abstract class AbstractWorldMap implements IWorldMap {
     protected List<Animal> animals = new ArrayList<>();
+    protected Map<Vector2d, Animal> objects = new HashMap<>();
 
     protected abstract Vector2d[] calculateBorder();
-    public abstract Object objectAt(Vector2d position);
+
     public abstract boolean canMoveTo(Vector2d position);
 
+    public Object objectAt(Vector2d position) {
+        return this.objects.get(position);
+    }
+
     public boolean isOccupied(Vector2d position) {
-        return (objectAt(position) != null);
+        return this.objectAt(position) != null;
     }
 
     public boolean place(Animal animal) {
-        //this?
-        if (this.canMoveTo(animal.getPosition())) {
-            animals.add(animal);
-            return true;
+        if (!this.canMoveTo(animal.getPosition())) {
+            throw new IllegalArgumentException("Pole " + animal.getPosition().toString() + " jest już zajęte!");
         }
-        return false;
+
+        this.animals.add(animal);
+        this.objects.put(animal.getPosition(), animal);
+        return true;
     }
 
+    //zmienic
     public void run(MoveDirection[] directions) {
+        if (animals.isEmpty())
+            return;
+        Animal animal;
+        Vector2d prev;
         for (int i = 0; i < directions.length; i++) {
-            animals.get(i % animals.size()).move(directions[i]);
+            animal = this.animals.get(i % this.animals.size());
+            prev = animal.getPosition();
+            animal.move(directions[i]);
+            if (!animal.getPosition().equals(prev)) {
+                objects.remove(prev);
+                objects.put(animal.getPosition(), animal);
+            }
         }
     }
 

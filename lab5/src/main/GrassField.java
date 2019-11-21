@@ -1,9 +1,9 @@
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class GrassField extends AbstractWorldMap implements IWorldMap {
-    //private int grassCount;
-    //ArrayList<Animal> animals = new ArrayList<>();
-    ArrayList<Grass> grassMap = new ArrayList<>();
+    protected List<Grass> grassMap = new ArrayList<>();
 
     public GrassField(int grassCount) {
         Vector2d lower = new Vector2d(0, 0);
@@ -16,6 +16,7 @@ public class GrassField extends AbstractWorldMap implements IWorldMap {
                 position = placeRandom(lower, upper);
             }
             grassMap.add(new Grass(position));
+            //objects.put(position, new Grass(position));
         }
     }
 
@@ -30,12 +31,42 @@ public class GrassField extends AbstractWorldMap implements IWorldMap {
     public boolean canMoveTo(Vector2d position) {
         Object that = objectAt(position);
         //prio for animal so we can place it on the grass field
-        return ( !isOccupied(position)|| that instanceof Grass);
+        return (!isOccupied(position) || that instanceof Grass);
         //we already check if the move is inside the border of our map (ReactangularMap)
     }
 
+    protected Vector2d[] calculateBorder() {
+        Vector2d mapLowerLeft = new Vector2d(0, 0);
+        Vector2d mapUpperRight = new Vector2d(0, 0);
+        //check the object HashMap
+        for (Vector2d position : super.objects.keySet()) {
+            mapLowerLeft = mapLowerLeft.lowerLeft(position);
+            mapUpperRight = mapUpperRight.upperRight(position);
+        }
+        for (Grass grassField : grassMap) {
+            mapLowerLeft = mapLowerLeft.lowerLeft(grassField.getPosition());
+            mapUpperRight = mapUpperRight.upperRight(grassField.getPosition());
+        }
+        return new Vector2d[]{mapLowerLeft, mapUpperRight};
+    }
+
+    @Override
     public Object objectAt(Vector2d position) {
-        //it is necessary
+        Object obj = super.objectAt(position);
+        if (obj != null)
+            return obj;
+        for (Grass grass : grassMap) {
+            if (grass.getPosition().equals(position))
+                return grass;
+        }
+        return null;
+    }
+
+}
+
+    /*
+    public Object objectAt(Vector2d position) {
+
         for (Animal animal : animals) {
             if (animal.getPosition().equals(position))
                 return animal;
@@ -44,44 +75,8 @@ public class GrassField extends AbstractWorldMap implements IWorldMap {
             if (grassField.getPosition().equals(position))
                 return grassField;
         }
+
+
         return null;
     }
-
-    protected Vector2d[] calculateBorder() {
-        //imperative encounter for this problem ;(
-        int xMin = Integer.MAX_VALUE;
-        int xMax = 0;
-        int yMin = Integer.MAX_VALUE;
-        int yMax = 0;
-        int x, y;
-
-        //check the animals list
-        for (Animal animal : animals) {
-            x = animal.getPosition().x;
-            y = animal.getPosition().y;
-            if (x > xMax)
-                xMax = x;
-            else if (x < xMin)
-                xMin = x;
-            if (y > yMax)
-                yMax = y;
-            else if (y < yMin)
-                yMin = y;
-        }
-        //check the grassMap list
-        for (Grass grassField : grassMap) {
-            x = grassField.getPosition().x;
-            y = grassField.getPosition().y;
-            if (x > xMax)
-                xMax = x;
-            else if (x < xMin)
-                xMin = x;
-            if (y > yMax)
-                yMax = y;
-            else if (y < yMin)
-                yMin = y;
-        }
-
-        return new Vector2d[]{new Vector2d(xMin, yMin), new Vector2d(xMax, yMax)};
-    }
-}
+    */

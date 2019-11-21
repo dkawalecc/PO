@@ -1,12 +1,20 @@
 //package agh.cs.lab4;
 
 public class Vector2d {
-    public final int x;
-    public final int y;
+    protected final int x;
+    protected final int y;
 
     public Vector2d(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 13;
+        hash += this.x * 31;
+        hash += this.y * 17;
+        return hash;
     }
 
     public String toString() {
