@@ -1,7 +1,11 @@
-public class Animal implements IMapElement{
+import java.util.ArrayList;
+import java.util.List;
+
+public class Animal implements IMapElement {
     private MapDirection orientation = MapDirection.NORTH;
     private Vector2d position = new Vector2d(2, 2);
     private IWorldMap map;
+    private List<IPositionChangeObserver> observers = new ArrayList<>();
 
 
     public Animal(IWorldMap map) {
@@ -13,15 +17,22 @@ public class Animal implements IMapElement{
         this.position = initialPosition;
     }
 
-
-    public String toString(){
-        return this.orientation.toString();
+    void addObserver(IPositionChangeObserver observer) {
+        observers.add(observer);
     }
 
-    public void move(MoveDirection direction) {
-        //Vector2d x1 = this.position;
-        //Vector2d x2 = this.orientation.toUnitVector();
+    void removeObserver(IPositionChangeObserver observer) {
+        observers.remove(observer);
+    }
 
+    void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+        for (IPositionChangeObserver observer : observers) {
+            observer.positionChanged(oldPosition, newPosition);
+        }
+    }
+
+
+    public void move(MoveDirection direction) {
         switch (direction) {
             case RIGHT:
                 this.orientation = this.orientation.next();
@@ -43,7 +54,13 @@ public class Animal implements IMapElement{
 
     }
 
-    public MapDirection getOrientation() { return this.orientation; }
+    public String toString() {
+        return this.orientation.toString();
+    }
+
+    public MapDirection getOrientation() {
+        return this.orientation;
+    }
 
     public Vector2d getPosition() {
         return this.position;

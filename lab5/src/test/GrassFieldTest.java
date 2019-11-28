@@ -30,7 +30,7 @@ public class GrassFieldTest {
 
         //possible since it is blank space
         assertTrue(map.canMoveTo(new Vector2d(2,2)));
-        map.grassMap.add(new Grass(new Vector2d(2,2)));
+        map.grassMap.put(new Vector2d(2,2),new Grass(new Vector2d(2,2)));
 
         assertTrue(map.canMoveTo(new Vector2d(2,2)));
         assertTrue(map.place(new Animal(map, new Vector2d(2,2))));
@@ -45,9 +45,9 @@ public class GrassFieldTest {
         map.place(new Animal(map, new Vector2d(2,2)));
         assertTrue(map.objectAt(new Vector2d(2,2)) instanceof Animal);
 
-        map.grassMap.add(new Grass(new Vector2d(3,3)));
+        map.grassMap.put(new Vector2d(3,3), new Grass(new Vector2d(3,3)));
         assertTrue(map.objectAt(new Vector2d(3,3)) instanceof Grass);
-        map.grassMap.add(new Grass(new Vector2d(2,2)));
+        map.grassMap.put(new Vector2d(2,2), new Grass(new Vector2d(2,2)));
         //prio for animal
         assertFalse(map.objectAt(new Vector2d(2,2)) instanceof Grass);
 

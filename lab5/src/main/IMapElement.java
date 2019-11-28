@@ -1,4 +1,4 @@
 public interface IMapElement {
-   public String toString();
-   public Vector2d getPosition();
+   String toString();
+   Vector2d getPosition();
 }

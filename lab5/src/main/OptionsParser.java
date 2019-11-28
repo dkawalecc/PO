@@ -1,37 +1,35 @@
-import java.util.Arrays;
-
 public class OptionsParser {
     public static MoveDirection[] parse(String[] moves) {
         MoveDirection[] directions = new MoveDirection[moves.length];
-        int i = 0;
 
-        for (String move : moves) {
-            switch (move) {
+
+        for (int i = 0; i < moves.length; i++) {
+            switch (moves[i]) {
                 case "f":
                 case "forward":
                     directions[i] = MoveDirection.FORWARD;
-                    i++;
+
                     break;
                 case "b":
                 case "backward":
                     directions[i] = MoveDirection.BACKWARD;
-                    i++;
+
                     break;
                 case "r":
                 case "right":
                     directions[i] = MoveDirection.RIGHT;
-                    i++;
+
                     break;
                 case "l":
                 case "left":
                     directions[i] = MoveDirection.LEFT;
-                    i++;
+
                     break;
                 default:
-                    throw new IllegalArgumentException(move + " is not legal move specification.");
+                    throw new IllegalArgumentException(moves[i] + " is not legal move specification.");
             }
         }
 
-        return Arrays.copyOfRange(directions, 0, i);
+        return directions;
     }
 }

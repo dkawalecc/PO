@@ -3,16 +3,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-abstract class AbstractWorldMap implements IWorldMap {
+abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObserver {
     protected List<Animal> animals = new ArrayList<>();
-    protected Map<Vector2d, Animal> objects = new HashMap<>();
+    protected Map<Vector2d, Animal> animalsMap = new HashMap<>();
+    protected Map<Vector2d, Grass> grassMap = new HashMap<>();
 
     protected abstract Vector2d[] calculateBorder();
 
     public abstract boolean canMoveTo(Vector2d position);
 
     public Object objectAt(Vector2d position) {
-        return this.objects.get(position);
+        return this.animalsMap.get(position);
     }
 
     public boolean isOccupied(Vector2d position) {
@@ -21,11 +22,12 @@ abstract class AbstractWorldMap implements IWorldMap {
 
     public boolean place(Animal animal) {
         if (!this.canMoveTo(animal.getPosition())) {
-            throw new IllegalArgumentException("Pole " + animal.getPosition().toString() + " jest już zajęte!");
+            throw new IllegalArgumentException("Nie udało się dodać na pozycji: " + animal.getPosition().toString());
         }
 
+        animal.addObserver(this);
         this.animals.add(animal);
-        this.objects.put(animal.getPosition(), animal);
+        this.animalsMap.put(animal.getPosition(), animal);
         return true;
     }
 
@@ -40,8 +42,7 @@ abstract class AbstractWorldMap implements IWorldMap {
             prev = animal.getPosition();
             animal.move(directions[i]);
             if (!animal.getPosition().equals(prev)) {
-                objects.remove(prev);
-                objects.put(animal.getPosition(), animal);
+                animal.positionChanged(prev, animal.getPosition());
             }
         }
     }
@@ -54,5 +55,10 @@ abstract class AbstractWorldMap implements IWorldMap {
         return map.draw(border[0], border[1]);
     }
 
+    public void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+        Animal animal = this.animalsMap.get(oldPosition);
+        animalsMap.remove(oldPosition);
+        animalsMap.put(newPosition, animal);
+    }
 
 }

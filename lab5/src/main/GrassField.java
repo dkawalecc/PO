@@ -1,9 +1,5 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-public class GrassField extends AbstractWorldMap implements IWorldMap {
-    protected List<Grass> grassMap = new ArrayList<>();
+public class GrassField extends AbstractWorldMap {
+    private MapBoundary unboundedMap = new MapBoundary();
 
     public GrassField(int grassCount) {
         Vector2d lower = new Vector2d(0, 0);
@@ -15,8 +11,9 @@ public class GrassField extends AbstractWorldMap implements IWorldMap {
             while (isOccupied(position)) {
                 position = placeRandom(lower, upper);
             }
-            grassMap.add(new Grass(position));
-            //objects.put(position, new Grass(position));
+            Grass grass = new Grass(position);
+            grassMap.put(position ,grass);
+            unboundedMap.place(grass);
         }
     }
 
@@ -36,47 +33,38 @@ public class GrassField extends AbstractWorldMap implements IWorldMap {
     }
 
     protected Vector2d[] calculateBorder() {
+        /*
         Vector2d mapLowerLeft = new Vector2d(0, 0);
         Vector2d mapUpperRight = new Vector2d(0, 0);
         //check the object HashMap
-        for (Vector2d position : super.objects.keySet()) {
+        for (Vector2d position : super.animalsMap.keySet()) {
             mapLowerLeft = mapLowerLeft.lowerLeft(position);
             mapUpperRight = mapUpperRight.upperRight(position);
         }
-        for (Grass grassField : grassMap) {
-            mapLowerLeft = mapLowerLeft.lowerLeft(grassField.getPosition());
-            mapUpperRight = mapUpperRight.upperRight(grassField.getPosition());
+        for (Vector2d position : grassMap.keySet()) {
+            mapLowerLeft = mapLowerLeft.lowerLeft(position);
+            mapUpperRight = mapUpperRight.upperRight(position);
         }
         return new Vector2d[]{mapLowerLeft, mapUpperRight};
+        */
+        return unboundedMap.calculateBorder();
     }
+
 
     @Override
     public Object objectAt(Vector2d position) {
         Object obj = super.objectAt(position);
         if (obj != null)
             return obj;
-        for (Grass grass : grassMap) {
-            if (grass.getPosition().equals(position))
-                return grass;
-        }
-        return null;
+
+        obj = this.grassMap.get(position);
+        return obj;
+    }
+
+    @Override
+    public boolean place(Animal animal) {
+        unboundedMap.place(animal);
+        return super.place(animal);
     }
 
 }
-
-    /*
-    public Object objectAt(Vector2d position) {
-
-        for (Animal animal : animals) {
-            if (animal.getPosition().equals(position))
-                return animal;
-        }
-        for (Grass grassField : grassMap) {
-            if (grassField.getPosition().equals(position))
-                return grassField;
-        }
-
-
-        return null;
-    }
-    */
